@@ -1,49 +1,20 @@
-let user_id = 12345; // В реальній грі потрібно отримувати user_id з Telegram Web Apps API
-let username = "Player";
-const apiBaseUrl = "http://127.0.0.1:8000"; // Замініть на ваш сервер, коли потрібно
+let userId = "user123"; // Replace with Telegram Web Apps API user_id
 
-// Функція для отримання та оновлення рахунку на сторінці
-async function updateScore() {
-    try {
-        let response = await fetch(`${apiBaseUrl}/score/?user_id=${user_id}`);
-        if (!response.ok) throw new Error("Не вдалося отримати рахунок");
-        let data = await response.json();
-        document.getElementById("score").innerText = `Твої очки: ${data.score}`;
-    } catch (error) {
-        console.error("Помилка при оновленні рахунку:", error);
-        document.getElementById("score").innerText = "Помилка завантаження рахунку";
-    }
+async function clickButton() {
+    const response = await fetch(`/click/?user_id=${userId}`, { method: "POST" });
+    const data = await response.json();
+    document.getElementById("score").innerText = `Your Score: ${data.score}`;
 }
 
-// Обробник кліку для збільшення рахунку
-document.getElementById("click-button").addEventListener("click", async () => {
-    try {
-        let response = await fetch(`${apiBaseUrl}/click/`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id, username }),
-        });
-        if (!response.ok) throw new Error("Не вдалося оновити рахунок");
-        updateScore();
-    } catch (error) {
-        console.error("Помилка кліку:", error);
-    }
-});
+async function resetScore() {
+    await fetch(`/reset/?user_id=${userId}`, { method: "POST" });
+    document.getElementById("score").innerText = "Your Score: 0";
+}
 
-// Обробник скидання рахунку
-document.getElementById("reset-button").addEventListener("click", async () => {
-    try {
-        let response = await fetch(`${apiBaseUrl}/reset/`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id }),
-        });
-        if (!response.ok) throw new Error("Не вдалося скинути рахунок");
-        updateScore();
-    } catch (error) {
-        console.error("Помилка скидання рахунку:", error);
-    }
-});
+async function getScore() {
+    const response = await fetch(`/score/?user_id=${userId}`);
+    const data = await response.json();
+    document.getElementById("score").innerText = `Your Score: ${data.score}`;
+}
 
-// Завантаження рахунку при відкритті сторінки
-updateScore();
+window.onload = getScore;
