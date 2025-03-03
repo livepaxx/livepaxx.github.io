@@ -1,20 +1,19 @@
-let userId = "user123"; // Replace with Telegram Web Apps API user_id
+let backend_url = "https://backend-iqp0.onrender.com";
 
-async function clickButton() {
-    const response = await fetch(`https://backend-iqp0.onrender.com/click/?user_id=${userId}`, { method: "POST" });
-    const data = await response.json();
-    document.getElementById("score").innerText = `Your Score: ${data.score}`;
+async function updateScore() {
+    let response = await fetch(`${backend_url}/score/?user_id=${user_id}`);
+    let data = await response.json();
+    document.getElementById("score").innerText = `Твої очки: ${data.score}`;
 }
 
-async function resetScore() {
-    await fetch(`https://backend-iqp0.onrender.com/reset/?user_id=${userId}`, { method: "POST" });
-    document.getElementById("score").innerText = "Your Score: 0";
-}
+document.getElementById("click-button").addEventListener("click", async () => {
+    await fetch(`${backend_url}/click/?user_id=${user_id}&username=${username}`, { method: "POST" });
+    updateScore();
+});
 
-async function getScore() {
-    const response = await fetch(`https://backend-iqp0.onrender.com/score/?user_id=${userId}`);
-    const data = await response.json();
-    document.getElementById("score").innerText = `Your Score: ${data.score}`;
-}
+document.getElementById("reset-button").addEventListener("click", async () => {
+    await fetch(`${backend_url}/reset/?user_id=${user_id}`, { method: "POST" });
+    updateScore();
+});
 
-window.onload = getScore;
+updateScore();
